@@ -6,10 +6,11 @@
 </head>
 <body>
 <canvas id="draw" width="800" height="800">
-	
 </canvas>
+<button class="eraser"></button>
 <script>
 	const canvas = document.querySelector('#draw')
+	const eraser = document.querySelector('.eraser')
 	const ctx = canvas.getContext('2d')
 	canvas.width = window.innerWidth;
 	canvas.height = window.innerHeight;
@@ -26,6 +27,7 @@
 	let lastY = 0;
 	let hue = 0;
 	let direction = true;
+	let eraserSelected = false;
 
 	canvas.addEventListener('mousedown', (e) => {
 		isDrawing = true
@@ -38,11 +40,20 @@
 		renderText()
 	})
 	canvas.addEventListener('mouseout', () => isDrawing = false)
-
+    eraser.addEventListener('click', () => eraserSelected = !eraserSelected)
 	function draw(e) {
 		if(!isDrawing) return;
 		ctx.beginPath();
-		ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`
+        if (eraserSelected){
+          ctx.strokeStyle = `white`
+        } else{
+          ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`
+          if(direction){
+            ctx.lineWidth++;
+          } else{
+            ctx.lineWidth--;
+          }
+        }
 		// ctx.lineWidth = hue;
 		// start from
 		ctx.moveTo(lastX, lastY)
@@ -50,7 +61,7 @@
 		ctx.lineTo(e.offsetX, e.offsetY)
 		ctx.stroke()
 		lastX = e.offsetX
-		lastY = e.offsetY 
+		lastY = e.offsetY
 		hue++;
 		// console.log(e)
 		if (hue >= 360) {
@@ -59,12 +70,7 @@
 		if (ctx.lineWidth >= 100 || ctx.lineWidth <= 1) {
 			direction = !direction;
 		}
-		if(direction){
-			ctx.lineWidth++;
-		} else{
-			ctx.lineWidth--;
-		}
-		
+
 	}
 
 	function renderText(){
@@ -92,6 +98,19 @@
 <style>
   html, body {
     margin:0;
+  }
+  .eraser{
+    position: absolute;
+    right: 60px;
+    top: 0;
+    background: url("eraser.png");
+    background-size: cover;
+    outline: none;
+    border: none;
+    padding: 12px;
+    width: 85px;
+    height: 60px;
+    color: white;
   }
 </style>
 
